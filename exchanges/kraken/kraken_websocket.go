@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/thrasher-corp/gocryptotrader/cardinal"
 	"github.com/thrasher-corp/gocryptotrader/common"
 	"github.com/thrasher-corp/gocryptotrader/common/convert"
 	"github.com/thrasher-corp/gocryptotrader/currency"
@@ -703,7 +704,7 @@ func (k *Kraken) wsProcessSpread(channelData *WebsocketChannelData, data []inter
 
 // wsProcessTrades converts trade data and sends it to the datahandler
 func (k *Kraken) wsProcessTrades(channelData *WebsocketChannelData, data []interface{}) error {
-	if !k.IsSaveTradeDataEnabled() {
+	if !cardinal.TickerEnabled() && !k.IsSaveTradeDataEnabled() {
 		return nil
 	}
 	var trades []trade.Data

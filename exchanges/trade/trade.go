@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/thrasher-corp/gocryptotrader/cardinal"
 	"github.com/thrasher-corp/gocryptotrader/common"
 	"github.com/thrasher-corp/gocryptotrader/currency"
 	"github.com/thrasher-corp/gocryptotrader/database"
@@ -29,20 +30,11 @@ func (p *Processor) setup(wg *sync.WaitGroup) {
 
 // AddTradesToBuffer will push trade data onto the buffer
 func AddTradesToBuffer(exchangeName string, data ...Data) error {
-	if database.DB == nil || database.DB.Config == nil || !database.DB.Config.Enabled {
-		return nil
-	}
 	if len(data) == 0 {
 		return nil
 	}
-	var errs common.Errors
-	if atomic.AddInt32(&processor.started, 0) == 0 {
-		var wg sync.WaitGroup
-		wg.Add(1)
-		processor.setup(&wg)
-		wg.Wait()
-	}
 	var validDatas []Data
+	var errs common.Errors
 	for i := range data {
 		if data[i].Price == 0 ||
 			data[i].Amount == 0 ||
@@ -73,6 +65,25 @@ func AddTradesToBuffer(exchangeName string, data ...Data) error {
 		}
 		data[i].ID = uu
 		validDatas = append(validDatas, data[i])
+	}
+
+	// cardinal set up
+	if cardinal.TickerEnabled() {
+		// send data to cardinal
+		for i := range validDatas {
+			cardinal.PushTrade(exchangeName, &validDatas[i])
+		}
+	}
+
+	// original
+	if database.DB == nil || database.DB.Config == nil || !database.DB.Config.Enabled {
+		return nil
+	}
+	if atomic.AddInt32(&processor.started, 0) == 0 {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		processor.setup(&wg)
+		wg.Wait()
 	}
 	processor.mutex.Lock()
 	processor.buffer = append(processor.buffer, validDatas...)
