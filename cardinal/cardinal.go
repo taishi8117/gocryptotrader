@@ -1,10 +1,16 @@
 package cardinal
 
 var (
-	tickerBus chan *TickerData
+	tickerBus  chan *TickerData
+	watcherBus chan *WatcherData
 )
 
 type TickerData struct {
+	ExchangeName string
+	Data         interface{}
+}
+
+type WatcherData struct {
 	ExchangeName string
 	Data         interface{}
 }
@@ -15,8 +21,18 @@ func SetupTickerBus() {
 	}
 }
 
+func SetupWatcherBus() {
+	if watcherBus == nil {
+		watcherBus = make(chan *WatcherData)
+	}
+}
+
 func TickerEnabled() bool {
 	return tickerBus != nil
+}
+
+func WatcherEnabled() bool {
+	return watcherBus != nil
 }
 
 func PushTrade(exch string, d interface{}) {
@@ -28,4 +44,8 @@ func PushTrade(exch string, d interface{}) {
 
 func ReadTicker() <-chan *TickerData {
 	return tickerBus
+}
+
+func ReadWatcher() <-chan *WatcherData {
+	return watcherBus
 }

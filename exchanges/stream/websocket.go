@@ -206,12 +206,12 @@ func (w *Websocket) Connect() error {
 	}
 
 	// Resubscribe after re-connection
-	if len(w.subscriptions) != 0 {
-		err = w.Subscriber(w.subscriptions)
-		if err != nil {
-			return fmt.Errorf("%v Error subscribing %s", w.exchangeName, err)
-		}
-	}
+	// if len(w.subscriptions) != 0 {
+	// 	err = w.Subscriber(w.subscriptions)
+	// 	if err != nil {
+	// 		return fmt.Errorf("%v Error subscribing %s", w.exchangeName, err)
+	// 	}
+	// }
 
 	return nil
 }

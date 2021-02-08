@@ -115,15 +115,16 @@ func (k *Kraken) WsConnect() error {
 					err)
 			} else {
 				go k.wsFunnelConnectionData(k.Websocket.AuthConn, comms)
-				var authsubs []stream.ChannelSubscription
-				authsubs, err = k.GenerateAuthenticatedSubscriptions()
-				if err != nil {
-					return err
-				}
-				err = k.Websocket.SubscribeToChannels(authsubs)
-				if err != nil {
-					return err
-				}
+				// debugging kraken auth websocket issue
+				// var authsubs []stream.ChannelSubscription
+				// authsubs, err = k.GenerateAuthenticatedSubscriptions()
+				// if err != nil {
+				// 	return err
+				// }
+				// err = k.Websocket.SubscribeToChannels(authsubs)
+				// if err != nil {
+				// 	return err
+				// }
 			}
 		}
 	}
@@ -1258,7 +1259,12 @@ channels:
 	var errs common.Errors
 	for i := range unsubs {
 		if common.StringDataContains(authenticatedChannels, unsubs[i].Subscription.Name) {
-			_, err := k.Websocket.AuthConn.SendMessageReturnResponse(unsubs[i].RequestID, unsubs[i])
+			unsub := unsubs[i]
+			if unsub.Pairs[0] == "" {
+				unsub.Pairs = nil
+			}
+			unsub.Subscription.Token = authToken
+			_, err := k.Websocket.AuthConn.SendMessageReturnResponse(unsub.RequestID, unsub)
 			if err != nil {
 				errs = append(errs, err)
 				continue
