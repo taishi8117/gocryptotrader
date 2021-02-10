@@ -682,6 +682,7 @@ func (b *Bitstamp) GetActiveOrders(req *order.GetOrdersRequest) ([]order.Detail,
 			Date:     tm,
 			Pair:     pair,
 			Exchange: b.Name,
+			Status:   order.Open,
 		})
 	}
 
@@ -765,6 +766,8 @@ func (b *Bitstamp) GetOrderHistory(req *order.GetOrdersRequest) ([]order.Detail,
 			Date:     tm,
 			Exchange: b.Name,
 			Pair:     currPair,
+			Status:   order.Closed,
+			Data:     resp[i],
 		})
 	}
 

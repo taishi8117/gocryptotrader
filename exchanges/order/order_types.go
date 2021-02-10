@@ -146,6 +146,7 @@ type Detail struct {
 	LastUpdated       time.Time
 	Pair              currency.Pair
 	Trades            []TradeHistory
+	Data              interface{}
 }
 
 // Cancel contains all properties that may be required

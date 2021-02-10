@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/thrasher-corp/gocryptotrader/cardinal"
 	"github.com/thrasher-corp/gocryptotrader/currency"
 	"github.com/thrasher-corp/gocryptotrader/exchanges/asset"
 	"github.com/thrasher-corp/gocryptotrader/exchanges/order"
@@ -294,7 +295,7 @@ func (b *Binance) wsHandleData(respRaw []byte) error {
 
 				switch streamType[1] {
 				case "trade":
-					if !b.IsSaveTradeDataEnabled() {
+					if !cardinal.TickerEnabled() && !b.IsSaveTradeDataEnabled() {
 						return nil
 					}
 					var t TradeStream

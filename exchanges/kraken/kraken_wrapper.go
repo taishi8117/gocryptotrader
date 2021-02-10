@@ -890,6 +890,7 @@ func (k *Kraken) GetActiveOrders(req *order.GetOrdersRequest) ([]order.Detail, e
 
 		side := order.Side(strings.ToUpper(resp.Open[i].Description.Type))
 		orderType := order.Type(strings.ToUpper(resp.Open[i].Description.OrderType))
+		status, _ := order.StringToOrderStatus(resp.Open[i].Status)
 		orders = append(orders, order.Detail{
 			ID:              i,
 			Amount:          resp.Open[i].Volume,
@@ -901,6 +902,7 @@ func (k *Kraken) GetActiveOrders(req *order.GetOrdersRequest) ([]order.Detail, e
 			Side:            side,
 			Type:            orderType,
 			Pair:            p,
+			Status:          status,
 		})
 	}
 
@@ -955,6 +957,7 @@ func (k *Kraken) GetOrderHistory(getOrdersRequest *order.GetOrdersRequest) ([]or
 
 		side := order.Side(strings.ToUpper(resp.Closed[i].Description.Type))
 		orderType := order.Type(strings.ToUpper(resp.Closed[i].Description.OrderType))
+		status, _ := order.StringToOrderStatus(resp.Closed[i].Status)
 		orders = append(orders, order.Detail{
 			ID:              i,
 			Amount:          resp.Closed[i].Volume,
@@ -967,6 +970,7 @@ func (k *Kraken) GetOrderHistory(getOrdersRequest *order.GetOrdersRequest) ([]or
 			Side:            side,
 			Type:            orderType,
 			Pair:            p,
+			Status:          status,
 		})
 	}
 
