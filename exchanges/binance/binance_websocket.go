@@ -163,6 +163,7 @@ func (b *Binance) wsReadData() {
 }
 
 func (b *Binance) wsHandleData(respRaw []byte) error {
+	fmt.Println("Binance.wsHandleData: ", string(respRaw))
 	var multiStreamData map[string]interface{}
 	err := json.Unmarshal(respRaw, &multiStreamData)
 	if err != nil {
@@ -242,6 +243,13 @@ func (b *Binance) wsHandleData(respRaw []byte) error {
 						Err:      err,
 					}
 				}
+				remaining := data.Data.Quantity - data.Data.CumulativeFilledQuantity
+
+				if data.Data.OrderStatus == "FILLED" {
+					// if remaining == 0 && oStatus == order.PartiallyFilled
+					oStatus = order.Filled
+				}
+
 				var p currency.Pair
 				var a asset.Item
 				p, a, err = b.GetRequestFormattedPairAndAssetType(data.Data.Symbol)
@@ -252,7 +260,7 @@ func (b *Binance) wsHandleData(respRaw []byte) error {
 					Price:           data.Data.Price,
 					Amount:          data.Data.Quantity,
 					ExecutedAmount:  data.Data.CumulativeFilledQuantity,
-					RemainingAmount: data.Data.Quantity - data.Data.CumulativeFilledQuantity,
+					RemainingAmount: remaining,
 					Exchange:        b.Name,
 					ID:              orderID,
 					Type:            oType,
@@ -261,6 +269,7 @@ func (b *Binance) wsHandleData(respRaw []byte) error {
 					AssetType:       a,
 					Date:            data.Data.OrderCreationTime,
 					Pair:            p,
+					Data:            data,
 				}
 			case "listStatus":
 				var data wsListStatus
@@ -548,32 +557,71 @@ func (b *Binance) GenerateSubscriptions() ([]stream.ChannelSubscription, error) 
 
 // Subscribe subscribes to a set of channels
 func (b *Binance) Subscribe(channelsToSubscribe []stream.ChannelSubscription) error {
+	payloads := []WsPayload{}
+
 	payload := WsPayload{
 		Method: "SUBSCRIBE",
 	}
 
 	for i := range channelsToSubscribe {
+		// if the payload size exceeds 4000, create another payload so it doesn't exceed 4096 bytes
+		// ex. up to GO-BTC doesn't exceed 4096 bytes
+		j, err := json.Marshal(payload)
+		if err != nil {
+			return fmt.Errorf("payload marshal error: %v", err)
+		}
+		if len(j) > 4000 {
+			payloads = append(payloads, payload)
+			payload = WsPayload{
+				Method: "SUBSCRIBE",
+			}
+		}
+
 		payload.Params = append(payload.Params, channelsToSubscribe[i].Channel)
 	}
-	err := b.Websocket.Conn.SendJSONMessage(payload)
-	if err != nil {
-		return err
+
+	payloads = append(payloads, payload)
+
+	for i := range payloads {
+		err := b.Websocket.Conn.SendJSONMessage(payloads[i])
+		if err != nil {
+			return err
+		}
 	}
+
 	b.Websocket.AddSuccessfulSubscriptions(channelsToSubscribe...)
 	return nil
 }
 
 // Unsubscribe unsubscribes from a set of channels
 func (b *Binance) Unsubscribe(channelsToUnsubscribe []stream.ChannelSubscription) error {
+	payloads := []WsPayload{}
+
 	payload := WsPayload{
 		Method: "UNSUBSCRIBE",
 	}
+
 	for i := range channelsToUnsubscribe {
+		j, err := json.Marshal(payload)
+		if err != nil {
+			return fmt.Errorf("payload marshal error: %v", err)
+		}
+		if len(j) > 4000 {
+			payloads = append(payloads, payload)
+			payload = WsPayload{
+				Method: "UNSUBSCRIBE",
+			}
+		}
 		payload.Params = append(payload.Params, channelsToUnsubscribe[i].Channel)
 	}
-	err := b.Websocket.Conn.SendJSONMessage(payload)
-	if err != nil {
-		return err
+
+	payloads = append(payloads, payload)
+
+	for i := range payloads {
+		err := b.Websocket.Conn.SendJSONMessage(payloads[i])
+		if err != nil {
+			return err
+		}
 	}
 	b.Websocket.RemoveSuccessfulUnsubscriptions(channelsToUnsubscribe...)
 	return nil

@@ -661,17 +661,19 @@ type wsAccountInfo struct {
 }
 
 type wsAccountPosition struct {
-	Stream string `json:"stream"`
-	Data   struct {
-		Currencies []struct {
-			Asset     string  `json:"a"`
-			Available float64 `json:"f,string"`
-			Locked    float64 `json:"l,string"`
-		} `json:"B"`
-		EventTime   time.Time `json:"E"`
-		LastUpdated time.Time `json:"u"`
-		EventType   string    `json:"e"`
-	} `json:"data"`
+	Stream string                `json:"stream"`
+	Data   wsAccountPositionData `json:"data"`
+}
+
+type wsAccountPositionData struct {
+	Currencies []struct {
+		Asset     string  `json:"a"`
+		Available float64 `json:"f,string"`
+		Locked    float64 `json:"l,string"`
+	} `json:"B"`
+	EventTime   time.Time `json:"E"`
+	LastUpdated time.Time `json:"u"`
+	EventType   string    `json:"e"`
 }
 
 type wsBalanceUpdate struct {
@@ -686,39 +688,42 @@ type wsBalanceUpdate struct {
 }
 
 type wsOrderUpdate struct {
-	Stream string `json:"stream"`
-	Data   struct {
-		ClientOrderID                     string    `json:"C"`
-		EventTime                         time.Time `json:"E"`
-		IcebergQuantity                   float64   `json:"F,string"`
-		LastExecutedPrice                 float64   `json:"L,string"`
-		CommissionAsset                   float64   `json:"N"`
-		OrderCreationTime                 time.Time `json:"O"`
-		StopPrice                         float64   `json:"P,string"`
-		QuoteOrderQuantity                float64   `json:"Q,string"`
-		Side                              string    `json:"S"`
-		TransactionTime                   time.Time `json:"T"`
-		OrderStatus                       string    `json:"X"`
-		LastQuoteAssetTransactedQuantity  float64   `json:"Y,string"`
-		CumulativeQuoteTransactedQuantity float64   `json:"Z,string"`
-		CancelledClientOrderID            string    `json:"c"`
-		EventType                         string    `json:"e"`
-		TimeInForce                       string    `json:"f"`
-		OrderListID                       int64     `json:"g"`
-		OrderID                           int64     `json:"i"`
-		LastExecutedQuantity              float64   `json:"l,string"`
-		IsMaker                           bool      `json:"m"`
-		Commission                        float64   `json:"n,string"`
-		OrderType                         string    `json:"o"`
-		Price                             float64   `json:"p,string"`
-		Quantity                          float64   `json:"q,string"`
-		RejectionReason                   string    `json:"r"`
-		Symbol                            string    `json:"s"`
-		TradeID                           int64     `json:"t"`
-		IsOnOrderBook                     bool      `json:"w"`
-		CurrentExecutionType              string    `json:"x"`
-		CumulativeFilledQuantity          float64   `json:"z,string"`
-	} `json:"data"`
+	Stream string            `json:"stream"`
+	Data   wsOrderUpdateData `json:"data"`
+}
+
+type wsOrderUpdateData struct {
+	ClientOrderID                     string    `json:"C"`
+	EventTime                         time.Time `json:"E"`
+	IcebergQuantity                   float64   `json:"F,string"`
+	LastExecutedPrice                 float64   `json:"L,string"`
+	CommissionAsset                   string    `json:"N"`
+	OrderCreationTime                 time.Time `json:"O"`
+	StopPrice                         float64   `json:"P,string"`
+	QuoteOrderQuantity                float64   `json:"Q,string"`
+	Side                              string    `json:"S"`
+	TransactionTime                   time.Time `json:"T"`
+	OrderStatus                       string    `json:"X"`
+	LastQuoteAssetTransactedQuantity  float64   `json:"Y,string"`
+	CumulativeQuoteTransactedQuantity float64   `json:"Z,string"`
+	CancelledClientOrderID            string    `json:"c"`
+	EventType                         string    `json:"e"`
+	TimeInForce                       string    `json:"f"`
+	OrderListID                       int64     `json:"g"`
+	OrderID                           int64     `json:"i"`
+	LastExecutedQuantity              float64   `json:"l,string"`
+	IsMaker                           bool      `json:"m"`
+	Commission                        float64   `json:"n,string"`
+	OrderType                         string    `json:"o"`
+	Price                             float64   `json:"p,string"`
+	Quantity                          float64   `json:"q,string"`
+	RejectionReason                   string    `json:"r"`
+	Symbol                            string    `json:"s"`
+	TradeID                           int64     `json:"t"`
+	IsOnOrderBook                     bool      `json:"w"`
+	CurrentExecutionType              string    `json:"x"`
+	CumulativeFilledQuantity          float64   `json:"z,string"`
+	Ignore                            int64     `json:"I"`
 }
 
 type wsListStatus struct {

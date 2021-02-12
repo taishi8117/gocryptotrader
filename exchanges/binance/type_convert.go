@@ -266,13 +266,11 @@ func (a *wsAccountInfo) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalJSON deserialises the JSON info, including the timestamp
-func (a *wsAccountPosition) UnmarshalJSON(data []byte) error {
-	type Alias wsAccountPosition
+func (a *wsAccountPositionData) UnmarshalJSON(data []byte) error {
+	type Alias wsAccountPositionData
 	aux := &struct {
-		Data struct {
-			EventTime   binanceTime `json:"E"`
-			LastUpdated binanceTime `json:"u"`
-		} `json:"data"`
+		EventTime   binanceTime `json:"E"`
+		LastUpdated binanceTime `json:"u"`
 		*Alias
 	}{
 		Alias: (*Alias)(a),
@@ -280,8 +278,8 @@ func (a *wsAccountPosition) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
-	a.Data.EventTime = aux.Data.EventTime.Time()
-	a.Data.LastUpdated = aux.Data.LastUpdated.Time()
+	a.EventTime = aux.EventTime.Time()
+	a.LastUpdated = aux.LastUpdated.Time()
 	return nil
 }
 
@@ -306,14 +304,12 @@ func (a *wsBalanceUpdate) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalJSON deserialises the JSON info, including the timestamp
-func (a *wsOrderUpdate) UnmarshalJSON(data []byte) error {
-	type Alias wsOrderUpdate
+func (a *wsOrderUpdateData) UnmarshalJSON(data []byte) error {
+	type Alias wsOrderUpdateData
 	aux := &struct {
-		Data struct {
-			EventTime         binanceTime `json:"E"`
-			OrderCreationTime binanceTime `json:"O"`
-			TransactionTime   binanceTime `json:"T"`
-		} `json:"data"`
+		EventTime         binanceTime `json:"E"`
+		OrderCreationTime binanceTime `json:"O"`
+		TransactionTime   binanceTime `json:"T"`
 		*Alias
 	}{
 		Alias: (*Alias)(a),
@@ -321,9 +317,9 @@ func (a *wsOrderUpdate) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
-	a.Data.EventTime = aux.Data.EventTime.Time()
-	a.Data.OrderCreationTime = aux.Data.OrderCreationTime.Time()
-	a.Data.TransactionTime = aux.Data.TransactionTime.Time()
+	a.EventTime = aux.EventTime.Time()
+	a.OrderCreationTime = aux.OrderCreationTime.Time()
+	a.TransactionTime = aux.TransactionTime.Time()
 	return nil
 }
 
