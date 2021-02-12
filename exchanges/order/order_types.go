@@ -115,38 +115,39 @@ type ModifyResponse struct {
 // Each exchange has their own requirements, so not all fields
 // are required to be populated
 type Detail struct {
-	ImmediateOrCancel bool
-	HiddenOrder       bool
-	FillOrKill        bool
-	PostOnly          bool
-	Leverage          string
-	Price             float64
-	Amount            float64
-	LimitPriceUpper   float64
-	LimitPriceLower   float64
-	TriggerPrice      float64
-	TargetAmount      float64
-	ExecutedAmount    float64
-	RemainingAmount   float64
-	Cost              float64
-	Fee               float64
-	Exchange          string
-	InternalOrderID   string
-	ID                string
-	ClientOrderID     string
-	AccountID         string
-	ClientID          string
-	WalletAddress     string
-	Type              Type
-	Side              Side
-	Status            Status
-	AssetType         asset.Item
-	Date              time.Time
-	CloseTime         time.Time
-	LastUpdated       time.Time
-	Pair              currency.Pair
-	Trades            []TradeHistory
-	Data              interface{}
+	ImmediateOrCancel   bool           `json:"immediate_or_cancel,omitempty"`
+	HiddenOrder         bool           `json:"hidden_order,omitempty"`
+	FillOrKill          bool           `json:"fill_or_kill,omitempty"`
+	PostOnly            bool           `json:"post_only,omitempty"`
+	Leverage            string         `json:"leverage,omitempty"`
+	Price               float64        `json:"price,omitempty"`
+	Amount              float64        `json:"amount,omitempty"`
+	LimitPriceUpper     float64        `json:"limit_price_upper,omitempty"`
+	LimitPriceLower     float64        `json:"limit_price_lower,omitempty"`
+	TriggerPrice        float64        `json:"trigger_price,omitempty"`
+	TargetAmount        float64        `json:"target_amount,omitempty"`
+	ExecutedAmount      float64        `json:"executed_amount,omitempty"`
+	ExecutedQuoteAmount float64        `json:"executed_quote_amount,omitempty"`
+	RemainingAmount     float64        `json:"remaining_amount,omitempty"`
+	Cost                float64        `json:"cost,omitempty"`
+	Fee                 float64        `json:"fee,omitempty"`
+	Exchange            string         `json:"exchange,omitempty"`
+	InternalOrderID     string         `json:"internal_order_id,omitempty"`
+	ID                  string         `json:"id,omitempty"`
+	ClientOrderID       string         `json:"client_order_id,omitempty"`
+	AccountID           string         `json:"account_id,omitempty"`
+	ClientID            string         `json:"client_id,omitempty"`
+	WalletAddress       string         `json:"wallet_address,omitempty"`
+	Type                Type           `json:"type,omitempty"`
+	Side                Side           `json:"side,omitempty"`
+	Status              Status         `json:"status,omitempty"`
+	AssetType           asset.Item     `json:"asset_type,omitempty"`
+	Date                time.Time      `json:"date,omitempty"`
+	CloseTime           time.Time      `json:"close_time,omitempty"`
+	LastUpdated         time.Time      `json:"last_updated,omitempty"`
+	Pair                currency.Pair  `json:"pair,omitempty"`
+	Trades              []TradeHistory `json:"trades,omitempty"`
+	Data                interface{}    `json:"data,omitempty"`
 }
 
 // Cancel contains all properties that may be required

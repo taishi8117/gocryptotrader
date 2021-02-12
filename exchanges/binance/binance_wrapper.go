@@ -610,9 +610,13 @@ func (b *Binance) SubmitOrder(s *order.Submit) (order.SubmitResponse, error) {
 		Symbol:      s.Pair,
 		Side:        sideType,
 		Price:       s.Price,
-		Quantity:    s.Amount,
 		TradeType:   requestParamsOrderType,
 		TimeInForce: timeInForce,
+	}
+	if s.TargetAmount != 0 {
+		orderRequest.QuoteOrderQty = s.TargetAmount
+	} else {
+		orderRequest.Quantity = s.Amount
 	}
 
 	response, err := b.NewOrder(&orderRequest)

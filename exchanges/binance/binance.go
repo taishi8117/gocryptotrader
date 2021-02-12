@@ -502,6 +502,8 @@ func (b *Binance) newOrder(api string, o *NewOrderRequest, resp *NewOrderRespons
 	if o.NewOrderRespType != "" {
 		params.Set("newOrderRespType", o.NewOrderRespType)
 	}
+
+	fmt.Println("binance order params: ", params)
 	return b.SendAuthHTTPRequest(http.MethodPost, path, params, limitOrder, resp)
 }
 

@@ -473,6 +473,30 @@ func (e *Base) SupportsPair(p currency.Pair, enabledPairs bool, assetType asset.
 	return errors.New("pair not supported")
 }
 
+// SupportsPair returns true or not whether a currency pair exists in the
+// exchange available currencies or not
+func (e *Base) SupportsPairExact(p currency.Pair, enabledPairs bool, assetType asset.Item) error {
+	if enabledPairs {
+		pairs, err := e.GetEnabledPairs(assetType)
+		if err != nil {
+			return err
+		}
+		if pairs.Contains(p, true) {
+			return nil
+		}
+		return errors.New("pair not supported")
+	}
+
+	avail, err := e.GetAvailablePairs(assetType)
+	if err != nil {
+		return err
+	}
+	if avail.Contains(p, true) {
+		return nil
+	}
+	return errors.New("pair not supported")
+}
+
 // FormatExchangeCurrencies returns a string containing
 // the exchanges formatted currency pairs
 func (e *Base) FormatExchangeCurrencies(pairs []currency.Pair, assetType asset.Item) (string, error) {

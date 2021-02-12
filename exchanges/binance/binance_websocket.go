@@ -257,19 +257,20 @@ func (b *Binance) wsHandleData(respRaw []byte) error {
 					return err
 				}
 				b.Websocket.DataHandler <- &order.Detail{
-					Price:           data.Data.Price,
-					Amount:          data.Data.Quantity,
-					ExecutedAmount:  data.Data.CumulativeFilledQuantity,
-					RemainingAmount: remaining,
-					Exchange:        b.Name,
-					ID:              orderID,
-					Type:            oType,
-					Side:            oSide,
-					Status:          oStatus,
-					AssetType:       a,
-					Date:            data.Data.OrderCreationTime,
-					Pair:            p,
-					Data:            data,
+					Price:               data.Data.Price,
+					Amount:              data.Data.Quantity,
+					ExecutedAmount:      data.Data.CumulativeFilledQuantity,
+					ExecutedQuoteAmount: data.Data.CumulativeQuoteTransactedQuantity,
+					RemainingAmount:     remaining,
+					Exchange:            b.Name,
+					ID:                  orderID,
+					Type:                oType,
+					Side:                oSide,
+					Status:              oStatus,
+					AssetType:           a,
+					Date:                data.Data.OrderCreationTime,
+					Pair:                p,
+					Data:                data,
 				}
 			case "listStatus":
 				var data wsListStatus
